@@ -1,0 +1,55 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: build-deploy
+spec:
+  workspaces:
+    - name: shared-workspace
+  params:
+    - name: git-url
+      type: string
+  tasks:
+    - name: fetch-source
+      taskRef:
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+      params:
+        - name: url
+          value: $(params.git-url)
+
+    - name: build-api
+      runAfter: ["fetch-source"]
+      taskRef:
+        name: buildah
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+      params:
+        - name: IMAGE
+          value: "api:latest"
+        - name: DOCKERFILE
+          value: "./api/Dockerfile"
+
+    - name: build-frontend
+      runAfter: ["fetch-source"]
+      taskRef:
+        name: buildah
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+      params:
+        - name: IMAGE
+          value: "frontend:latest"
+        - name: DOCKERFILE
+          value: "./frontend/Dockerfile"
+
+    - name: deploy
+      runAfter: ["build-api", "build-frontend"]
+      taskRef:
+        name: kubernetes-actions
+      params:
+        - name: script
+          value: |
+            kubectl apply -f k8s/manifests/
