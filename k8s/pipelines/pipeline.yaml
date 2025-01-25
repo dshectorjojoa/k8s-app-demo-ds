@@ -1,0 +1,16 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: build-deploy-pipeline
+spec:
+  tasks:
+    - name: build-api
+      taskRef:
+        name: buildah
+      params:
+        - name: IMAGE
+          value: "docker.io/dshectorjojoa/api:latest"
+        - name: DOCKERFILE
+          value: "api/Dockerfile"
+        - name: CONTEXT
+          value: "api/"
