@@ -1,0 +1,20 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: build-deploy-run
+spec:
+  pipelineRef:
+    name: build-deploy
+  workspaces:
+    - name: shared-workspace
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi
+  params:
+    - name: git-url
+      value: 'https://github.com/dshectorjojoa/k8s-app-demo-ds.git'
+  serviceAccountName: pipeline-sa

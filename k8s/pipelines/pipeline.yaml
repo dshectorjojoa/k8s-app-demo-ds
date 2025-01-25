@@ -18,7 +18,6 @@ spec:
       params:
         - name: url
           value: $(params.git-url)
-
     - name: build-api
       runAfter: ["fetch-source"]
       taskRef:
@@ -28,10 +27,11 @@ spec:
           workspace: shared-workspace
       params:
         - name: IMAGE
-          value: "api:latest"
+          value: "docker.io/dshectorjojoa/api:latest"
         - name: DOCKERFILE
-          value: "./api/Dockerfile"
-
+          value: "/workspace/source/api/Dockerfile"
+        - name: CONTEXT
+          value: "/workspace/source/api"
     - name: build-frontend
       runAfter: ["fetch-source"]
       taskRef:
@@ -41,15 +41,8 @@ spec:
           workspace: shared-workspace
       params:
         - name: IMAGE
-          value: "frontend:latest"
+          value: "docker.io/dshectorjojoa/frontend:latest"
         - name: DOCKERFILE
-          value: "./frontend/Dockerfile"
-
-    - name: deploy
-      runAfter: ["build-api", "build-frontend"]
-      taskRef:
-        name: kubernetes-actions
-      params:
-        - name: script
-          value: |
-            kubectl apply -f k8s/manifests/
+          value: "/workspace/source/frontend/Dockerfile"
+        - name: CONTEXT
+          value: "/workspace/source/frontend"
