@@ -1,40 +1,35 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres
-  namespace: default
+  name: db
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: postgres
+      app: db
   template:
     metadata:
       labels:
-        app: postgres
+        app: db
     spec:
       containers:
         - name: postgres
-          image: postgres:13
-          env:
-            - name: POSTGRES_USER
-              value: myuser
-            - name: POSTGRES_PASSWORD
-              value: mypassword
-            - name: POSTGRES_DB
-              value: mydb
+          image: dshectorjojoa/database:latest
           ports:
             - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: counter
+            - name: POSTGRES_PASSWORD
+              value: mysecretpassword
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: db
-  namespace: default
 spec:
   selector:
-    app: postgres
+    app: db
   ports:
-    - protocol: TCP
-      port: 5432
+    - port: 5432
       targetPort: 5432

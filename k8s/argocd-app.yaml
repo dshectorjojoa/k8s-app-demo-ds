@@ -6,13 +6,13 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/dshectorjojoa/k8s-app-demo-ds.git  # URL de tu repositorio Git
-    path: k8s/manifests  # Ruta donde están los manifiestos de Kubernetes
-    targetRevision: HEAD  # Rama o commit que deseas desplegar
+    repoURL: https://github.com/dshectorjojoa/k8s-app-demo-ds.git
+    path: k8s/manifests
+    targetRevision: HEAD
   destination:
-    server: https://kubernetes.default.svc  # Usar el clúster local
-    namespace: default  # Namespace donde se desplegará la aplicación
+    server: https://kubernetes.default.svc
+    namespace: default
   syncPolicy:
     automated:
-      prune: true  # Eliminar recursos obsoletos
-      selfHeal: true  # Corregir desviaciones automáticamente
+      prune: true
+      selfHeal: true

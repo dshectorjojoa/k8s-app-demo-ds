@@ -4,13 +4,20 @@ metadata:
   name: build-deploy-pipeline
 spec:
   tasks:
-    - name: build-api
+    - name: git-clone
       taskRef:
-        name: buildah
+        name: git-clone
+    - name: build-push-api
+      runAfter: ["git-clone"]
+      taskRef:
+        name: kaniko
       params:
         - name: IMAGE
-          value: "docker.io/dshectorjojoa/api:latest"
-        - name: DOCKERFILE
-          value: "api/Dockerfile"
-        - name: CONTEXT
-          value: "api/"
+          value: dshectorjojoa/api:latest
+    - name: build-push-frontend
+      runAfter: ["git-clone"]
+      taskRef:
+        name: kaniko
+      params:
+        - name: IMAGE
+          value: dshectorjojoa/frontend:latest
