@@ -1,0 +1,34 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: kaniko
+spec:
+  params:
+    - name: IMAGE
+      description: The URL of the image to push
+      type: string
+    - name: CONTEXT
+      description: Path to the build context
+      type: string
+      default: "."
+    - name: DOCKERFILE
+      description: Path to the Dockerfile
+      type: string
+      default: "Dockerfile"
+    - name: VERBOSITY
+      description: Log level (info, debug, warn, error, fatal)
+      type: string
+      default: "info"
+  workspaces:
+    - name: source
+      description: The source workspace that contains the Dockerfile
+  steps:
+    - name: build-and-push
+      image: gcr.io/kaniko-project/executor:latest
+      script: |
+        #!/busybox/sh
+        /kaniko/executor \
+          --dockerfile=$(workspaces.source.path)/$(params.DOCKERFILE) \
+          --context=$(workspaces.source.path)/$(params.CONTEXT) \
+          --destination=$(params.IMAGE) \
+          --verbosity=$(params.VERBOSITY)

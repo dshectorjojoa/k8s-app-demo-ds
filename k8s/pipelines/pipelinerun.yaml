@@ -1,7 +1,14 @@
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
-  name: build-deploy-run
+  name: build-deploy-pipeline-run
 spec:
   pipelineRef:
     name: build-deploy-pipeline
+  workspaces:
+    - name: shared-workspace
+      persistentVolumeClaim:
+        claimName: shared-pvc
+  params:
+    - name: app-name
+      value: k8s-app-demo
