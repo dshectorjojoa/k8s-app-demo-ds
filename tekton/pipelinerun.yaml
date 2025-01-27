@@ -1,8 +1,19 @@
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
-  name: deploy-application-run
-  namespace: tekton-pipelines
+  name: app-ci-pipeline-run
+  namespace: tekton-app
 spec:
   pipelineRef:
-    name: deploy-application-pipeline
+    name: app-ci-pipeline
+  params:
+    - name: git-url
+      value: "https://github.com/dshectorjojoa/k8s-app-demo-ds.git" # Cambia esto
+    - name: git-revision
+      value: "main"
+    - name: image-url
+      value: "docker.io/dshectorjojoa/frontend:latest" # Cambia esto
+  workspaces:
+    - name: shared-workspace
+      persistentVolumeClaim:
+        claimName: tekton-workspace-pvc

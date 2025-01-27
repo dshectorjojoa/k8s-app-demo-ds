@@ -1,0 +1,24 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineResource
+metadata:
+  name: app-git-repo
+  namespace: tekton-app
+spec:
+  type: git
+  params:
+    - name: url
+      value: "https://github.com/dshectorjojoa/k8s-app-demo-ds.git" # Cambia por tu repo
+    - name: revision
+      value: "main"
+
+---
+apiVersion: tekton.dev/v1beta1
+kind: PipelineResource
+metadata:
+  name: app-docker-image
+  namespace: tekton-app
+spec:
+  type: image
+  params:
+    - name: url
+      value: "dshectorjojoa/frontend:latest" # Cambia por la imagen de tu app

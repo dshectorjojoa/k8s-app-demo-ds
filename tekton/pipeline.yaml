@@ -1,20 +1,41 @@
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: deploy-application-pipeline
-  namespace: tekton-pipelines
+  name: app-ci-pipeline
+  namespace: tekton-app
 spec:
+  params:
+    - name: git-url
+      description: "URL del repositorio Git"
+      type: string
+    - name: git-revision
+      description: "Rama o commit del repositorio"
+      type: string
+      default: "main"
+    - name: image-url
+      description: "URL de la imagen Docker a construir"
+      type: string
+  workspaces:
+    - name: shared-workspace
+      description: "Directorio compartido para el código fuente"
   tasks:
-    - name: build-image
+    - name: clone-repo
+      taskRef:
+        name: git-clone
+      params:
+        - name: url
+          value: "$(params.git-url)"
+        - name: revision
+          value: "$(params.git-revision)"
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+    - name: build-and-push
       taskRef:
         name: build-docker-image
       params:
-        - name: username
-          value: "your-dockerhub-username"
-        - name: password
-          value: "your-dockerhub-password"
-    - name: deploy-to-kubernetes
-      runAfter:
-        - build-image
-      taskRef:
-        name: deploy-task
+        - name: imageUrl
+          value: "$(params.image-url)"
+      workspaces:
+        - name: source
+          workspace: shared-workspace

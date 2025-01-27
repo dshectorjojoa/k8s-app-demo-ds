@@ -1,0 +1,30 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: build-docker-image
+  namespace: tekton-app
+spec:
+  workspaces:
+    - name: source
+      description: "Workspace que contiene el código fuente"
+  params:
+    - name: imageUrl
+      description: "URL de la imagen Docker"
+      type: string
+  steps:
+    - name: build
+      image: docker:20.10.7
+      script: |
+        # Cambia al directorio con el código fuente
+        cd /workspace/output/frontend
+        # Construye la imagen Docker
+        docker build -t $(params.imageUrl) .
+        # Empuja la imagen a un registro de Docker
+        docker push $(params.imageUrl)
+      volumeMounts:
+        - name: docker-sock
+          mountPath: /var/run/docker.sock
+  volumes:
+    - name: docker-sock
+      hostPath:
+        path: /var/run/docker.sock
