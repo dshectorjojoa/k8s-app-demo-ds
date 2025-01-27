@@ -5,6 +5,7 @@ metadata:
 spec:
   workspaces:
     - name: shared-workspace
+    - name: dockerconfig
   tasks:
     - name: git-clone
       taskRef:
@@ -24,11 +25,15 @@ spec:
       workspaces:
         - name: source
           workspace: shared-workspace
+        - name: dockerconfig
+          workspace: dockerconfig
       params:
         - name: IMAGE
           value: dshectorjojoa/api:latest
         - name: CONTEXT
           value: "api"
+        - name: DOCKERFILE
+          value: "api/Dockerfile"
     - name: build-push-frontend
       runAfter: ["git-clone"]
       taskRef:
@@ -36,15 +41,12 @@ spec:
       workspaces:
         - name: source
           workspace: shared-workspace
+        - name: dockerconfig
+          workspace: dockerconfig
       params:
         - name: IMAGE
           value: dshectorjojoa/frontend:latest
         - name: CONTEXT
           value: "frontend"
-    - name: sync-argocd
-      runAfter: ["build-push-api", "build-push-frontend"]
-      taskRef:
-        name: sync-argocd
-      params:
-        - name: app-name
-          value: k8s-app-demo
+        - name: DOCKERFILE
+          value: "frontend/Dockerfile"

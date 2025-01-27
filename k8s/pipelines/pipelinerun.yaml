@@ -9,6 +9,6 @@ spec:
     - name: shared-workspace
       persistentVolumeClaim:
         claimName: shared-pvc
-  params:
-    - name: app-name
-      value: k8s-app-demo
+    - name: dockerconfig
+      secret:
+        secretName: dockerhub-secret
