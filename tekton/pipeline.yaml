@@ -1,0 +1,20 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: deploy-application-pipeline
+  namespace: tekton-pipelines
+spec:
+  tasks:
+    - name: build-image
+      taskRef:
+        name: build-docker-image
+      params:
+        - name: username
+          value: "your-dockerhub-username"
+        - name: password
+          value: "your-dockerhub-password"
+    - name: deploy-to-kubernetes
+      runAfter:
+        - build-image
+      taskRef:
+        name: deploy-task

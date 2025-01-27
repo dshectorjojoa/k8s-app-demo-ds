@@ -1,0 +1,8 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: deploy-application-run
+  namespace: tekton-pipelines
+spec:
+  pipelineRef:
+    name: deploy-application-pipeline

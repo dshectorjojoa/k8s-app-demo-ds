@@ -1,0 +1,44 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: build-docker-image
+  namespace: tekton-pipelines
+spec:
+  steps:
+    - name: build
+      image: docker:20.10
+      script: |
+        #!/bin/sh
+        docker build -t my-app-image:latest .
+    - name: push
+      image: docker:20.10
+      script: |
+        #!/bin/sh
+        docker login -u $(params.username) -p $(params.password)
+        docker push my-app-image:latest
+  params:
+    - name: username
+      type: apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: build-docker-image
+  namespace: tekton-pipelines
+spec:
+  steps:
+    - name: build
+      image: docker:20.10
+      script: |
+        #!/bin/sh
+        docker build -t my-app-image:latest .
+    - name: push
+      image: docker:20.10
+      script: |
+        #!/bin/sh
+        docker login -u $(params.username) -p $(params.password)
+        docker push my-app-image:latest
+  params:
+    - name: username
+      type: string
+    - name: password
+      type: string
+
