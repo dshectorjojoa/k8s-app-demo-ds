@@ -1,5 +1,5 @@
 # Usar la imagen base de Nginx
-FROM nginx:latest
+FROM docker.io/library/nginx:latest
 
 # Copiar el archivo HTML a la imagen
 COPY src/index.html /usr/share/nginx/html/index.html
