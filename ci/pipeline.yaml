@@ -6,7 +6,7 @@ metadata:
 spec:
   workspaces:
     - name: shared-workspace
-    - name: docker-auth
+    - name: dockerconfig
   tasks:
     - name: clone-repo
       taskRef:
@@ -17,32 +17,50 @@ spec:
           value: "https://github.com/dshectorjojoa/k8s-app-demo-ds.git"
         - name: revision
           value: "main"
+        - name: deleteExisting  # Evita que se borren archivos previos
+          value: "false"
       workspaces:
         - name: output
           workspace: shared-workspace
 
     - name: build-docker
+      runAfter:
+        - clone-repo  # Asegurar que `clone-repo` termine antes de `build-docker`
       taskRef:
         name: buildah
         kind: ClusterTask
       params:
         - name: IMAGE
-          value: "dshectorjojoa/hola-mundo:latest"
+          value: "docker.io/dshectorjojoa/hola-mundo:latest"
+        - name: STORAGE_DRIVER
+          value: "vfs"
+        - name: CONTEXT
+          value: "/workspace/shared-workspace"  # Asegurar que apunta al workspace correcto
+        - name: DOCKERFILE
+          value: "docker/Dockerfile"
       workspaces:
         - name: source
           workspace: shared-workspace
-        - name: auth
-          workspace: docker-auth
+        - name: dockerconfig
+          workspace: dockerconfig
 
     - name: push-docker
+      runAfter:
+        - build-docker  # Asegurar que `build-docker` termine antes de `push-docker`
       taskRef:
         name: buildah
         kind: ClusterTask
       params:
         - name: IMAGE
-          value: "dshectorjojoa/hola-mundo:latest"
+          value: "docker.io/dshectorjojoa/hola-mundo:latest"
+        - name: STORAGE_DRIVER
+          value: "vfs"
+        - name: CONTEXT
+          value: "/workspace/shared-workspace"
+        - name: DOCKERFILE
+          value: "docker/Dockerfile"
       workspaces:
         - name: source
           workspace: shared-workspace
-        - name: auth
-          workspace: docker-auth
+        - name: dockerconfig
+          workspace: dockerconfig

@@ -8,7 +8,7 @@ spec:
     name: build-and-deploy
   workspaces:
     - name: shared-workspace
-      emptyDir: {}
-    - name: docker-auth
+      emptyDir: {}  # Volumen compartido entre todas las tareas
+    - name: dockerconfig
       secret:
         secretName: regcred
