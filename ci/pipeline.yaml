@@ -2,6 +2,7 @@ apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
   name: build-and-deploy
+  namespace: default
 spec:
   workspaces:
     - name: shared-workspace
@@ -23,6 +24,7 @@ spec:
     - name: build-docker
       taskRef:
         name: buildah
+        kind: ClusterTask
       params:
         - name: IMAGE
           value: "dshectorjojoa/hola-mundo:latest"
@@ -35,6 +37,7 @@ spec:
     - name: push-docker
       taskRef:
         name: buildah
+        kind: ClusterTask
       params:
         - name: IMAGE
           value: "dshectorjojoa/hola-mundo:latest"

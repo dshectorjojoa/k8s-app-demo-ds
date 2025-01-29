@@ -2,6 +2,7 @@ apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
   name: build-and-deploy-run
+  namespace: default
 spec:
   pipelineRef:
     name: build-and-deploy
