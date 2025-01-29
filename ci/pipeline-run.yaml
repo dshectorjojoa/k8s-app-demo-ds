@@ -13,3 +13,6 @@ spec:
     - name: dockerconfig
       secret:
         secretName: regcred
+        items:
+          - key: .dockerconfigjson
+            path: config.json  # Esto es importante
