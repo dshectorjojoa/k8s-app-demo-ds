@@ -5,7 +5,7 @@ metadata:
   namespace: default
 spec:
   workspaces:
-    - name: output  # Antes: shared-workspace
+    - name: output  # Ahora usa un PVC en lugar de un `emptyDir`
     - name: dockerconfig
   tasks:
     - name: clone-repo
@@ -17,11 +17,9 @@ spec:
           value: "https://github.com/dshectorjojoa/k8s-app-demo-ds.git"
         - name: revision
           value: "main"
-        - name: deleteExisting
-          value: "false"
       workspaces:
         - name: output
-          workspace: output  # Antes: shared-workspace
+          workspace: output  # Mantener el mismo nombre en todas las tareas
 
     - name: build-docker
       runAfter:
@@ -35,7 +33,7 @@ spec:
         - name: STORAGE_DRIVER
           value: "vfs"
         - name: CONTEXT
-          value: "/workspace/output"  # Antes: /workspace/shared-workspace
+          value: "/workspace/output"  # Usar la misma ruta
         - name: DOCKERFILE
           value: "Dockerfile"
       workspaces:
@@ -56,11 +54,11 @@ spec:
         - name: STORAGE_DRIVER
           value: "vfs"
         - name: CONTEXT
-          value: "/workspace/output"  # Antes: /workspace/shared-workspace
+          value: "/workspace/output"
         - name: DOCKERFILE
           value: "Dockerfile"
       workspaces:
         - name: source
-          workspace: output  # Antes: shared-workspace
+          workspace: output
         - name: dockerconfig
           workspace: dockerconfig

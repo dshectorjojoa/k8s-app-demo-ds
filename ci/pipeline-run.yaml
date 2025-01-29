@@ -7,8 +7,9 @@ spec:
   pipelineRef:
     name: build-and-deploy
   workspaces:
-    - name: output  # Antes: shared-workspace
-      emptyDir: {}  # Volumen compartido entre todas las tareas
+    - name: output  # Usa el PVC en lugar de `emptyDir`
+      persistentVolumeClaim:
+        claimName: tekton-workspace-pvc
     - name: dockerconfig
       secret:
         secretName: regcred
