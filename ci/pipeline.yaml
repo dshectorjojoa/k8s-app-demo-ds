@@ -1,0 +1,45 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: build-and-deploy
+spec:
+  workspaces:
+    - name: shared-workspace
+    - name: docker-auth
+  tasks:
+    - name: clone-repo
+      taskRef:
+        name: git-clone
+        kind: ClusterTask
+      params:
+        - name: url
+          value: "https://github.com/dshectorjojoa/k8s-app-demo-ds.git"
+        - name: revision
+          value: "main"
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+
+    - name: build-docker
+      taskRef:
+        name: buildah
+      params:
+        - name: IMAGE
+          value: "dshectorjojoa/hola-mundo:latest"
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+        - name: auth
+          workspace: docker-auth
+
+    - name: push-docker
+      taskRef:
+        name: buildah
+      params:
+        - name: IMAGE
+          value: "dshectorjojoa/hola-mundo:latest"
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+        - name: auth
+          workspace: docker-auth
