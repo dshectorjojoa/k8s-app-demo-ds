@@ -7,7 +7,7 @@ spec:
   pipelineRef:
     name: build-and-deploy
   workspaces:
-    - name: shared-workspace
+    - name: output  # Antes: shared-workspace
       emptyDir: {}  # Volumen compartido entre todas las tareas
     - name: dockerconfig
       secret:
